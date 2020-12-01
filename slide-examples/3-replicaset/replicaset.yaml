@@ -1,0 +1,45 @@
+---
+# ReplicaSets are used to deploy multiple identical pods.
+# Each pod will follow the same specification but will have a unique name, of
+# the form <replicasetname>-<randomstring>. e.g. this ReplicaSet may create pods
+# like `my-first-rs-bhgjk`.
+#
+# We're using the `apps` API for this resource.
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-first-rs
+  namespace: default
+spec:
+  # This tells Kubernetes how many pods to create.
+  replicas: 3
+  # This helps the ReplicaSet controller find extra pods.
+  # Kubernetes uses owner references on resources to keep track of if another
+  # resource was responsible for creating this resource.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx
+      app.kubernetes.io/instance: my-first-pod
+      version: 1.0.0
+  # The template defines the pod resources that will be created from this
+  # ReplicaSet.
+  template:
+    metadata:
+      # These are the same as what's defined in the ReplicaSet's selector.
+      labels:
+        app.kubernetes.io/name: nginx
+        app.kubernetes.io/instance: my-first-pod
+        version: 1.0.0
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        volumeMounts: []
+        env/usr/local/bin/tmux split-window -h -c ${PWD}\n:
+        - name: TEST
+          value: foobar

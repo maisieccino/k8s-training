@@ -1,0 +1,65 @@
+---
+# apiVersion & kind tells kubernetes what resource you're creating.
+# In this example, we use the v1 Kubernetes API to create a pod.
+apiVersion: v1
+kind: Pod
+# Metadata stores things that don't affect the behaviour of the resource itself.
+# E.g. name, the namespace it belongs to, any labels or annotations you want to
+# add to the resource.
+metadata:
+  # Names are unique inside a namespace.
+  name: my-first-pod
+  namespace: default
+  # Labels are a way of logically grouping resources of the same type together.
+  # A few common labels are given below.
+  labels:
+    # Labels can have any name, these are just conventional ones.
+    app.kubernetes.io/name: nginx
+    app.kubernetes.io/instance: my-first-pod
+    version: 1.0.0
+  # Annotations are normally used when other applications are interacting with
+  # this resource. They can be used to add extra functionality to the resource.
+  annotations:
+    # For instance, this annotation is used by Prometheus to instruct it to
+    # collect metrics from this pod.
+    # Note that "truthy" values like true, 1, yes, etc need to be wrapped in
+    # speech marks.
+    prometheus.io/scrape: "true"
+# Spec describes the resource itself.
+spec:
+  # A pod is a collection of containers sharing network and storage. Define them
+  # here.
+  containers:
+  - name: nginx
+    # Image to run. If you are using Docker for Mac/Windows Kubernetes then you
+    # can use local images. Minikube and microk8s also have their own Docker
+    # registries.
+    image: nginx:latest
+    # This will be Always, IfNotPresent, or Never. For floating tags (where the
+    # underlying image changes but the tag doesn't), this must be Always!
+    # For local images this should be Never.
+    imagePullPolicy: Always
+    # A list of ports to expose from the container.
+    # You can expose both UDP and TCP ports here, and give them names to be
+    # referenced by other resources (like Services).
+    ports:
+    # Here we have defined one port on this pod container, exposing NGINX on
+    # HTTP port 80.
+    # By default the same port as the container's port is exposed from the Pod,
+    # but you can modify this by explicitly setting the hostPort.
+    - name: http
+      containerPort: 80
+      protocol: TCP
+    # Volume mounts are a way of mounting the volumes defined for your pod into
+    # the container's filesystem.
+    volumeMounts: []
+    # env lets you set environment variables on your containers.
+    # Kubernetes will also set some extra environment variables automatically,
+    # such as the address for the Kubernetes API, or for service hostname and
+    # ports.
+    env:
+    - name: TEST
+      value: foobar
+  # If you need to attach storage volumes to your containers, they would be
+  # defined here.
+  volumes: []

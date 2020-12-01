@@ -1,0 +1,42 @@
+---
+# Here we're defining a service, a logical representation of a web service
+# endpoint.
+# Kubernetes will automatically fetch a list of endpoints for this service based
+# on the labels you provide for matching, will create an DNS record, and
+# optionally set up an virtual IP address that routes traffic to your pods.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: default
+  labels: {}
+  annotations: {}
+spec:
+  # Types of Service:
+  # * ClusterIP - Creates an IP address internal to the cluster, that routes
+  #   traffic to your pods. This is the default type of service.
+  # * NodePort - Exposes the service via a port that is opened on each cluster
+  #   node. Very effective for allowing traffic into the cluster, or for local
+  #   development on your local cluster.
+  # * LoadBalancer - Similar to NodePort, will expose your Service to the
+  #   outside world via node ports, but will leverage your cloud's load
+  #   balancing services (e.g. AWS Elastic Load Balancing) to route and balance
+  #   requests to your cluster's nodes. A convenience layer to prevent you from
+  #   having to do it yourself.
+  # * ExternalName - This sets up a CNAME DNS record in the cluster that maps to
+  #   the given DNS name you provide. Useful for providing a local DNS name to
+  #   access external services.
+  type: ClusterIP
+  # Selector is used to find pods that match the labels you provide to create
+  # endpoints for this service.
+  selector:
+    app.kubernetes.io/name: nginx
+    app.kubernetes.io/instance: my-first-pod
+  # Ports that this service expose, and the ports on the pod that they map to.
+  ports:
+  - name: http
+    protocol: HTTP
+    port: 80
+    # targetPort is either the port number, or the name of the port if you
+    # defined it.
+    targetPort: http
